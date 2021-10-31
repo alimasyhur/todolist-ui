@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const ENTER_BUTTON = 13;
 const ESC_BUTTON = 27
 
-const Todo = ({ title, completed, removeTodoItemProp }) => {
+const Todo = ({ title, completed, removeTodoItemProp, editTodoItemProp }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [value, setValue] = useState(title);
     const [tempValue, setTempValue] = useState(title);
@@ -17,6 +17,7 @@ const Todo = ({ title, completed, removeTodoItemProp }) => {
         const key = e.keyCode;
 
         if (key === ENTER_BUTTON) {
+            editTodoItemProp({ title: tempValue });
             setValue(tempValue);
             setIsEditing(false)
         }
@@ -32,7 +33,11 @@ const Todo = ({ title, completed, removeTodoItemProp }) => {
     }
 
     const handleButtonClick = () => {
-        setCompleted(!completedState);
+        setCompleted((oldCompleted) => {
+            const newState = !oldCompleted;
+            editTodoItemProp({ completed: newState });
+            return newState;
+        });
     }
 
     return (
@@ -44,7 +49,7 @@ const Todo = ({ title, completed, removeTodoItemProp }) => {
                             <input
                                 onChange={handleInputOnChange}
                                 onKeyDown={handleInputKeyDown}
-                                onFocus={true}
+                                onFocus={() => true}
                                 value={tempValue}
                             />
                         </div>
